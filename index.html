@@ -1,143 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo App with Bootstrap</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <div id="app" class="container mt-5"></div>
+    
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <script type="text/jsx">
+        const app = document.getElementById("app");
 
-<html>
-    <head>
-        <style>
-        body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f9;
-    margin: 0;
-    padding: 0;
-}
+        function Header(props) {
+            return <h1 class="text-center text-primary">{`Hallo ${props.title ? props.title : 'Default Title'}`}</h1>
+        }
 
-h1 {
-    color: #333;
-}
-
-#app {
-    max-width: 600px;
-    margin: 50px auto;
-    padding: 20px;
-    background: #fff;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    border-radius: 10px;
-}
-
-form {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 20px;
-}
-
-input[type="text"] {
-    width: 80%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 16px;
-}
-
-button {
-    width: 18%;
-    padding: 10px;
-    background-color: rgb(23, 72, 187);
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-}
-
-button:hover {
-    background-color: rgb(20, 59, 158);
-}
-
-ul {
-    list-style: none;
-    padding: 0;
-}
-
-li {
-    padding: 10px;
-    background: #f9f9f9;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    margin-bottom: 10px;
-}
-
-li:nth-child(even) {
-    background: #ececec;
-}
-
-        </style>
-    </head>
-    <body>
-        <div id="app"></div>
-        <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
-        <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-        <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-        <script type="text/jsx">
-            const app = document.getElementById("app");
-
-            function Header(props) {
-                return <h1>{`Hallo ${props.title ? props.title : 'Default Title'}`}</h1>
+        function FormInput(props) {
+            const [inputValue, setInputValue] = React.useState("");
+            
+            function handleChange(event) {
+                setInputValue(event.target.value);
             }
 
-            function HomePage() {
-                const names = ['Farel', 'Steavent', 'Cuplung']
-                return <div>
-                    <Header title="React" />
-                    <Header title="Farel" />
-                    <ul>
-                        {names.map((name, index) => <li key={index}>{name}</li>)}
-                    </ul>
-                </div>
+            function handleSubmit(event) {
+                event.preventDefault();
+                props.handleSubmit(inputValue);
+                setInputValue("");
             }
 
-            function FormInput(props) {
-                const [inputValue, setInputValue] = React.useState("");
-                
-                function handleChange(event) {
-                    setInputValue(event.target.value);
-                }
+            return <form onSubmit={handleSubmit} class="d-flex gap-2 my-3">
+                <input 
+                    type="text" 
+                    class="form-control" 
+                    placeholder="Input Activity" 
+                    value={inputValue}
+                    onChange={handleChange}
+                />
+                <button type="submit" class="btn btn-primary">Add</button>
+            </form>
+        }
 
-                function handleSubmit(event) {
-                    event.preventDefault();
-                    props.handleSubmit(inputValue);
-                    setInputValue("");
-                }
+        function Content(props) {
+            return <ul class="list-group">
+                {props.lists.map((item, index) => <li key={index} class="list-group-item">{item}</li>)}
+            </ul>
+        }
 
-                return <form onSubmit={handleSubmit}>
-                    <input 
-                        type="text" 
-                        placeholder="Input Activity" 
-                        value={inputValue}
-                        onChange={handleChange}
-                    />
-                    <button type="submit">Add</button>
-                </form>
+        function TodoApp() {
+            const [lists, setLists] = React.useState([]);
+
+            function handleSubmit(activity) {
+                setLists([...lists, activity]);
             }
 
-            function Content(props) {
-                return <ul>
-                    {props.lists.map((item, index) => <li key={index}>{item}</li>)}
-                </ul>
-            }
+            return <div class="card shadow p-4">
+                <Header title="Todo List" />
+                <FormInput handleSubmit={handleSubmit} />
+                <Content lists={lists} />
+            </div>
+        }
 
-            function TodoApp() {
-                const [lists, setLists] = React.useState([]);
-
-                function handleSubmit(activity) {
-                    setLists([...lists, activity]);
-                }
-
-                return <>
-                    <FormInput handleSubmit={handleSubmit}></FormInput>
-                    <Content lists={lists}></Content>
-                </>
-            }
-
-            const root = ReactDOM.createRoot(app);
-            root.render(<TodoApp />);
-        </script>
-    </body>
+        const root = ReactDOM.createRoot(app);
+        root.render(<TodoApp />);
+    </script>
+</body>
 </html>
